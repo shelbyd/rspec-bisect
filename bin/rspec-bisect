@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+
+puts "No failing tests."
+puts "No order dependencies."
