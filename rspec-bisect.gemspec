@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Shelby Doolittle"]
   spec.email         = ["shelby@shelbyd.com"]
   spec.summary       = %q{Detect order dependencies in rspec test suites.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
+  spec.description   = %q{Detect order dependencies in rspec test suites. Also print the minimal set of tests to reproduce the failure(s).}
   spec.homepage      = ""
   spec.license       = "MIT"
 
