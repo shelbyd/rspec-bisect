@@ -1,6 +1,6 @@
 # Rspec::Bisect
 
-TODO: Write a gem description
+Detect order dependencies in rspec test suites and print a minimal list of tests required to reproduce it.
 
 ## Installation
 
