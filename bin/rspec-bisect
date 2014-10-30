@@ -1,4 +1,15 @@
 #!/usr/bin/env ruby
 
-puts "No failing tests."
+require 'json'
+
+result = `rspec --format json`
+parsed = JSON.parse result
+
+failure_count = parsed["summary"]["failure_count"]
+if failure_count > 0
+  puts "#{failure_count} failing test#{failure_count > 1 ? 's' : ''}."
+else
+  puts "No failing tests."
+end
+
 puts "No order dependencies."
