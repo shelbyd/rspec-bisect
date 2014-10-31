@@ -2,8 +2,18 @@
 
 require 'json'
 require 'colorize'
+require 'optparse'
 
-result = `rspec --format json`
+options = {}
+OptionParser.new do |opts|
+  opts.banner = 'Usage: rspec-bisect [options]'
+
+  opts.on('-s', '--seed N', Integer, 'Seed that causes order dependencies') do |s|
+    options[:seed] = s
+  end
+end.parse!
+
+result = `rspec --format json #{options[:seed].nil? ? '' : "--seed #{options[:seed]}"}`
 parsed = JSON.parse result
 
 examples = parsed["examples"]
