@@ -24,6 +24,10 @@ def last_command_passed?
   $?.exitstatus == 0
 end
 
+def last_command_failed?
+  not last_command_passed?
+end
+
 order_dependent_examples = failing_examples.select do |example|
   run_examples([example])
   last_command_passed?
@@ -46,14 +50,22 @@ order_dependent_examples.each do |example|
         example["line_number"] != e["line_number"]
   end
 
-  while candidates.size > 1
-    candidates.each_slice(candidates.size / 2) do |candidate_group|
+  culprit_count_theory = 1
+  while candidates.size > culprit_count_theory
+    found_useless_group = false
+    candidates.each_slice(candidates.size / (culprit_count_theory + 1)) do |excluded_candidates|
+      candidate_group = candidates - excluded_candidates
+
       run_examples candidate_group + [example]
-      if last_command_passed?
-        candidates = candidates - candidate_group
+      if last_command_failed?
+        candidates = candidate_group
+
+        found_useless_group = true
         break
       end
     end
+
+    culprit_count_theory += 1 unless found_useless_group
   end
 
   candidates.each { |candidate| puts candidate["full_description"] }
