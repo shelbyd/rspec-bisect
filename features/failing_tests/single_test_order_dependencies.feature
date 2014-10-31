@@ -44,7 +44,10 @@ Feature: prints order dependencies
     """
     a test that passes
     a test that fails
+    """
 
+    And the output should contain:
+    """
     a test that passes
     a test that also fails
     """

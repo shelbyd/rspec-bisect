@@ -15,9 +15,16 @@ end
 
 failing_examples = examples.select { |e| e["status"] == "failed" }
 
+def examples_as_rspec_params(examples)
+  examples.map { |e| "#{e["file_path"]}:#{e["line_number"]}" }.join ' '
+end
+
+def run_examples_command(examples)
+  "rspec #{examples_as_rspec_params(examples)}"
+end
+
 def run_examples(examples)
-  test_string = examples.map { |e| "#{e["file_path"]}:#{e["line_number"]}" }.join ' '
-  `rspec #{test_string}`
+  `#{run_examples_command(examples)}`
 end
 
 def last_command_passed?
@@ -45,20 +52,20 @@ end
 order_dependent_examples.each do |example|
   puts
 
-  candidates = examples.take_while do |e|
+  culprits = examples.take_while do |e|
     example["file_path"] != e["file_path"] ||
         example["line_number"] != e["line_number"]
   end
 
   culprit_count_theory = 1
-  while candidates.size > culprit_count_theory
+  while culprits.size > culprit_count_theory
     found_useless_group = false
-    candidates.each_slice(candidates.size / (culprit_count_theory + 1)) do |excluded_candidates|
-      candidate_group = candidates - excluded_candidates
+    culprits.each_slice(culprits.size / (culprit_count_theory + 1)) do |excluded_culprits|
+      culprit_group = culprits - excluded_culprits
 
-      run_examples candidate_group + [example]
+      run_examples culprit_group + [example]
       if last_command_failed?
-        candidates = candidate_group
+        culprits = culprit_group
 
         found_useless_group = true
         break
@@ -68,8 +75,10 @@ order_dependent_examples.each do |example|
     culprit_count_theory += 1 unless found_useless_group
   end
 
-  candidates.each { |candidate| puts candidate["full_description"] }
+  culprits.each { |candidate| puts candidate["full_description"] }
 
   puts example["full_description"]
+
+  puts run_examples_command culprits + [example]
 end
 
