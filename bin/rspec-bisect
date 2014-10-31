@@ -5,6 +5,7 @@ require 'json'
 result = `rspec --format json`
 parsed = JSON.parse result
 
+examples = parsed["examples"]
 failure_count = parsed["summary"]["failure_count"]
 if failure_count > 0
   puts "#{failure_count} failing test#{failure_count > 1 ? 's' : ''}."
@@ -12,7 +13,7 @@ else
   puts "No failing tests."
 end
 
-failing_examples = parsed["examples"].select { |e| e["status"] == "failed" }
+failing_examples = examples.select { |e| e["status"] == "failed" }
 order_dependent_examples = failing_examples.select do |example|
   `rspec #{example["file_path"]}:#{example["line_number"]}`
   $?.exitstatus == 0
@@ -26,3 +27,13 @@ if order_dependent_examples.size > 0
 else
   puts "No order dependencies."
 end
+
+order_dependent_examples.each do |example|
+  examples.take_while do |e|
+    example["file_path"] != e["file_path"] ||
+        example["line_number"] != e["line_number"]
+  end.each { |candidate| puts candidate["full_description"] }
+
+  puts example["full_description"]
+end
+
