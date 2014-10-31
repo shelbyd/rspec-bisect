@@ -20,7 +20,7 @@ Feature: which tests have order dependencies
     And the output should contain "Order dependency detected:"
     And the output should contain "a test that fails"
 
-  Scenario: one test causes another test to fail
+  Scenario: one test causes two other tests to fail
     Given a file named "spec/failing_spec.rb" with:
       """ruby
       RSpec.describe 'a test that' do

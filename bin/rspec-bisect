@@ -47,12 +47,12 @@ order_dependent_examples.each do |example|
   end
 
   while candidates.size > 1
-    candidate_group = candidates[0...candidates.size/2]
-    run_examples candidate_group + [example]
-    if last_command_passed?
-      candidates = candidates - candidate_group
-    else
-      candidates = candidate_group
+    candidates.each_slice(candidates.size / 2) do |candidate_group|
+      run_examples candidate_group + [example]
+      if last_command_passed?
+        candidates = candidates - candidate_group
+        break
+      end
     end
   end
 
