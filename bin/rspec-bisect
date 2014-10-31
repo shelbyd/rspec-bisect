@@ -18,6 +18,12 @@ OptionParser.new do |opts|
   end
 end.parse!
 
+if options[:seed].nil?
+  puts 'Running tests with no seed'
+else
+  puts "Running tests with seed #{options[:seed]}"
+end
+
 result = `rspec --format json #{options[:seed].nil? ? '' : "--seed #{options[:seed]}"}`
 parsed = JSON.parse result
 
