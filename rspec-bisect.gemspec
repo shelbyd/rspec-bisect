@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["shelby@shelbyd.com"]
   spec.summary       = %q{Detect order dependencies in rspec test suites.}
   spec.description   = %q{Detect order dependencies in rspec test suites. Also print the minimal set of tests to reproduce the failure(s).}
-  spec.homepage      = ""
+  spec.homepage      = "https://github.com/shelbyd/rspec-bisect"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
