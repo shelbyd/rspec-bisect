@@ -20,7 +20,11 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+So you think you have order dependencies? This tool will tell you exactly which tests are causing that dependency. It won't try to figure out if one exists or tell you why it's happening.
+
+Have your rspec config set so that ```rspec --seed 1234``` runs your test suite with the specified seed.
+
+Run ```rspec-bisect --seed 1234``` and rspec-bisect will tell you which tests are from an order dependency and the minimum tests required to reproduce it.
 
 ## Contributing
 
