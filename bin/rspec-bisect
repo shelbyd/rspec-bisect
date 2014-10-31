@@ -5,7 +5,11 @@ require 'colorize'
 require 'optparse'
 require 'ruby-progressbar'
 
-options = {}
+@options = {}
+def options
+  @options
+end
+
 OptionParser.new do |opts|
   opts.banner = 'Usage: rspec-bisect [options]'
 
@@ -25,7 +29,11 @@ else
   puts "Running tests with seed #{options[:seed]}"
 end
 
-result = `rspec --format json #{options[:seed].nil? ? '' : "--seed #{options[:seed]}"}`
+def rspec_seed_argument
+  options[:seed].nil? ? '' : "--seed #{options[:seed]}"
+end
+
+result = `rspec --format json #{rspec_seed_argument}`
 parsed = JSON.parse result
 
 examples = parsed['examples']
@@ -43,7 +51,7 @@ def examples_as_rspec_params(examples)
 end
 
 def run_examples_command(examples)
-  "rspec #{examples_as_rspec_params(examples)}"
+  "rspec #{examples_as_rspec_params(examples)} #{rspec_seed_argument}"
 end
 
 def run_examples(examples)
