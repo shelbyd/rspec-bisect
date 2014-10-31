@@ -59,7 +59,7 @@ def last_command_failed?
 end
 
 def progress_bar(additional_options)
-  ProgressBar.create({format: '%t %w %e'}.merge(additional_options))
+  ProgressBar.create({format: '%t |%w>%i| %c/%C |%e'}.merge(additional_options))
 end
 
 dependent_examples_progress = progress_bar title: 'Detecting Dependent Examples',
@@ -85,22 +85,27 @@ order_dependent_examples.each do |example|
   puts
   puts "Culprits for #{example['full_description']}:"
 
-  culprit_progress = progress_bar title: 'Determining Culprits',
-                                  total: nil
+  culprit_progress = progress_bar title: 'Determining culprits',
+                                  total: nil,
+                                  format: '%t |%i| %c potential culprits'
 
   culprits = examples.take_while do |e|
     example['file_path'] != e['file_path'] ||
         example['line_number'] != e['line_number']
   end
 
+  culprit_progress.progress = culprits.size
+
   culprit_count_theory = 1
   while culprits.size > culprit_count_theory
     found_useless_group = false
     culprits.each_slice(culprits.size / (culprit_count_theory + 1)) do |excluded_culprits|
-      culprit_group = culprits - excluded_culprits
+      culprit_progress.progress = culprits.size
 
+      culprit_group = culprits - excluded_culprits
       run_examples culprit_group + [example]
-      culprit_progress.increment
+
+      culprit_progress.progress = culprits.size
       if last_command_failed?
         culprits = culprit_group
 
