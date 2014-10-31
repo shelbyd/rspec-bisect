@@ -11,6 +11,11 @@ OptionParser.new do |opts|
   opts.on('-s', '--seed N', Integer, 'Seed that causes order dependencies') do |s|
     options[:seed] = s
   end
+
+  opts.on('--help', 'Show this message') do
+    puts opts
+    exit
+  end
 end.parse!
 
 result = `rspec --format json #{options[:seed].nil? ? '' : "--seed #{options[:seed]}"}`
