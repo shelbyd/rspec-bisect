@@ -1,6 +1,5 @@
 Feature: accepts seeds for first rspec run
 
-  @wip
   Scenario: suite requires seeds
     Given a file named "spec/failing_spec.rb" with:
     """ruby

@@ -112,6 +112,8 @@ order_dependent_examples.each do |example|
     culprit_count_theory += 1 unless found_useless_group
   end
 
+  culprit_progress.stop
+
   culprits.each { |candidate| puts candidate['full_description'].green }
 
   puts example['full_description'].red
