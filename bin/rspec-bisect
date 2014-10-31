@@ -47,12 +47,12 @@ order_dependent_examples.each do |example|
   end
 
   while candidates.size > 1
-    candidate = candidates[0]
-    run_examples [candidate, example]
+    candidate_group = candidates[0...candidates.size/2]
+    run_examples candidate_group + [example]
     if last_command_passed?
-      candidates = candidates[1..-1]
+      candidates = candidates - candidate_group
     else
-      candidates = [candidate]
+      candidates = candidate_group
     end
   end
 
