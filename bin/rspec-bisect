@@ -3,6 +3,7 @@
 require 'json'
 require 'colorize'
 require 'optparse'
+require 'ruby-progressbar'
 
 options = {}
 OptionParser.new do |opts|
@@ -57,9 +58,18 @@ def last_command_failed?
   not last_command_passed?
 end
 
+def progress_bar(additional_options)
+  ProgressBar.create({format: '%t %w %e'}.merge(additional_options))
+end
+
+dependent_examples_progress = progress_bar title: 'Detecting Dependent Examples',
+                                           total: failing_examples.size
+
 order_dependent_examples = failing_examples.select do |example|
   run_examples([example])
-  last_command_passed?
+  passed = last_command_passed?
+  dependent_examples_progress.increment
+  passed
 end
 
 if order_dependent_examples.size > 0
@@ -75,6 +85,9 @@ order_dependent_examples.each do |example|
   puts
   puts "Culprits for #{example['full_description']}:"
 
+  culprit_progress = progress_bar title: 'Determining Culprits',
+                                  total: nil
+
   culprits = examples.take_while do |e|
     example['file_path'] != e['file_path'] ||
         example['line_number'] != e['line_number']
@@ -87,6 +100,7 @@ order_dependent_examples.each do |example|
       culprit_group = culprits - excluded_culprits
 
       run_examples culprit_group + [example]
+      culprit_progress.increment
       if last_command_failed?
         culprits = culprit_group
 

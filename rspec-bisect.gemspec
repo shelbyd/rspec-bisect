@@ -24,4 +24,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "aruba", "0.6.1"
   spec.add_dependency "rspec", "~> 3"
   spec.add_dependency "colorize", "0.7.3"
+  spec.add_dependency "ruby-progressbar", "1.6.1"
 end
