@@ -12,4 +12,17 @@ else
   puts "No failing tests."
 end
 
-puts "No order dependencies."
+failing_examples = parsed["examples"].select { |e| e["status"] == "failed" }
+order_dependent_examples = failing_examples.select do |example|
+  `rspec #{example["file_path"]}:#{example["line_number"]}`
+  $?.exitstatus == 0
+end
+
+if order_dependent_examples.size > 0
+  puts "Order dependenc#{ order_dependent_examples.size > 1 ? 'ies' : 'y'} detected:"
+  order_dependent_examples.each do |example|
+    puts "\t#{example["full_description"]}"
+  end
+else
+  puts "No order dependencies."
+end
