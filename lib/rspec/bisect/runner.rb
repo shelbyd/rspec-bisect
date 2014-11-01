@@ -1,11 +1,16 @@
 require 'json'
-require 'colorize'
 require 'optparse'
 require 'ruby-progressbar'
 
 module RSpec
   module Bisect
     class Runner
+      attr_accessor :reporter
+
+      def initialize(reporter: reporter)
+        self.reporter = reporter
+      end
+
       def execute!
         @options = {}
         def options
@@ -25,11 +30,7 @@ module RSpec
           end
         end.parse!
 
-        if options[:seed].nil?
-          puts 'Running tests with no seed'
-        else
-          puts "Running tests with seed #{options[:seed]}"
-        end
+        reporter.seed options[:seed]
 
         def rspec_seed_argument
           options[:seed].nil? ? '' : "--seed #{options[:seed]}"
@@ -40,11 +41,7 @@ module RSpec
 
         examples = parsed['examples']
         failure_count = parsed['summary']['failure_count']
-        if failure_count > 0
-          puts "#{failure_count} failing test#{failure_count > 1 ? 's' : ''}.".red
-        else
-          puts 'No failing tests.'.green
-        end
+        reporter.failing_tests failure_count
 
         failing_examples = examples.select { |e| e['status'] == 'failed' }
 
@@ -82,18 +79,10 @@ module RSpec
           passed
         end
 
-        if order_dependent_examples.size > 0
-          puts "Order dependenc#{ order_dependent_examples.size > 1 ? 'ies' : 'y'} detected:"
-          order_dependent_examples.each do |example|
-            puts "\t#{example['full_description']}".red
-          end
-        else
-          puts 'No order dependencies.'.green
-        end
+        reporter.order_dependent_examples order_dependent_examples
 
         order_dependent_examples.each do |example|
-          puts
-          puts "Culprits for #{example['full_description']}:"
+          reporter.determining_culprits example
 
           culprit_progress = progress_bar title: 'Determining culprits',
                                           total: nil,
@@ -129,11 +118,9 @@ module RSpec
 
           culprit_progress.stop
 
-          culprits.each { |candidate| puts candidate['full_description'].green }
+          reporter.culprits culprits, example
 
-          puts example['full_description'].red
-
-          puts (run_examples_command culprits + [example]).red
+          reporter.report_failure run_examples_command culprits + [example]
         end
       end
     end
