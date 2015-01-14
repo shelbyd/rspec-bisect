@@ -22,7 +22,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "cucumber", "1.3.17"
   spec.add_development_dependency "aruba", "0.6.1"
-  spec.add_dependency "rspec", "~> 3"
+  spec.add_dependency "rspec", "> 2.12"
   spec.add_dependency "colorize", "0.7.3"
   spec.add_dependency "ruby-progressbar", "1.6.1"
 end
