@@ -5,10 +5,12 @@ require 'ruby-progressbar'
 module RSpec
   module Bisect
     class Runner
-      attr_accessor :reporter
+      attr_accessor :reporter,
+                    :result_parser
 
-      def initialize(reporter: reporter)
+      def initialize(reporter: reporter, result_parser: result_parser)
         self.reporter = reporter
+        self.result_parser = result_parser
       end
 
       def execute!
@@ -36,8 +38,8 @@ module RSpec
           options[:seed].nil? ? '' : "--seed #{options[:seed]}"
         end
 
-        result = `rspec --format json #{rspec_seed_argument}`
-        parsed = JSON.parse result
+        result = Result.new `rspec --format json #{rspec_seed_argument}`
+        parsed = result.as_json
 
         examples = parsed['examples']
         failure_count = parsed['summary']['failure_count']
