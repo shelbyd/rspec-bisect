@@ -18,3 +18,7 @@ mkmf.log
 
 # Compiled gems
 *.gem
+
+# Bundled Gems
+vendor
+
