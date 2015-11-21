@@ -1,3 +1,11 @@
+# DEPRECATED
+
+RSpec has a command that will perform the same features as this project. Prefer to use that instead.
+
+    $ rspec --seed 1234 --bisect
+    
+See [their documentation](https://relishapp.com/rspec/rspec-core/docs/command-line/bisect) for more details.
+
 # Rspec::Bisect
 
 Detect order dependencies in rspec test suites and print a minimal list of tests required to reproduce it.
